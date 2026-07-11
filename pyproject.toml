@@ -1,7 +1,27 @@
 [project]
-name = "mlx-image-diffusion"
+name = "mlx-diffusion-generation"
 version = "0.1.0"
-description = "Add your description here"
+description = "Generate Image or Video using MLX Diffusion Models"
 readme = "README.md"
+authors = [
+    { name = "Hyunbeen Chang", email = "bean980310@outlook.com" }
+]
 requires-python = ">=3.10"
-dependencies = []
+dependencies = [
+    "mlx",
+    "mlx-vlm",
+    "diffusers",
+]
+
+[project.scripts]
+mlx-image-generation = "mlx_image_generation:main"
+mlx-video-generation = "mlx_video_generation:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["mlx_image_generation*", "mlx_video_generation*"]
+exclude = ["tests*", "src*"]  # Explicitly exclude tests directory
+
+[build-system]
+requires = ["uv_build>=0.11.25,<0.12.0"]
+build-backend = "uv_build"

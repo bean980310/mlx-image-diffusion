@@ -1,0 +1,42 @@
+name: Test PRs
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: macos-14
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990 # v8.3.2
+        with:
+          python-version: '3.10'
+
+      - name: Install MLX
+        run: |
+          uv pip install mlx
+
+      - name: Install pre-commit
+        run: |
+          uv pip install pre-commit
+          pre-commit run --all
+          if ! git diff --quiet; then
+            echo 'Style checks failed, please install pre-commit and run pre-commit run --all and push the change'
+            exit 1
+          fi
+
+      - name: Install package and dependencies
+        run: |
+          uv pip install pytest
+          uv pip install -e .
+
+      - name: Run Python tests
+        run: |
+          pytest -s ./mlx_image_generation/tests --ignore=tests/test_smoke.py
+          pytest -s ./mlx_video_generation/tests --ignore=tests/test_smoke.py
